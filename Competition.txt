@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025年Q4 医疗设备市场分析报告</title>
+    
+    <!-- 加载 Tailwind CSS 框架 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 加载 Chart.js 图表库 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- 加载字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Chosen Palette: Warm Neutral Professional. Background #F9FAFB, Accents #0F766E -->
+    <!-- Application Structure Plan: Master-Detail dashboard for Market and Competition analysis. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body { 
+            font-family: 'Noto Sans SC', sans-serif; 
+            background-color: #F9FAFB; 
+            color: #374151; 
+        }
+        .chart-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 600px; 
+            margin: auto; 
+            height: 350px; 
+            max-height: 400px;
+        }
+        .active-tab { 
+            background-color: #0F766E; 
+            color: white; 
+            border-bottom: 3px solid #134E4A; 
+        }
+        .inactive-tab { 
+            background-color: white; 
+            color: #4B5563; 
+        }
+        .fade-in { 
+            animation: fadeIn 0.5s ease-in; 
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(5px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        .loading-shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- 头部区域 -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">2025 Q4 医疗设备报告 <span class="text-teal-600 text-xl">智能增强版</span></h1>
+                <p class="text-sm text-gray-500 mt-1">深度洞察 MarCom 传播策略与市场准入趋势</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex space-x-2">
+                <button onclick="generateSummary()" class="px-5 py-2 bg-indigo-600 text-white rounded-xl shadow-lg hover:bg-indigo-700 transition font-medium flex items-center">
+                    <span class="mr-2">✨</span> AI 智能总结
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 导航切换 -->
+    <nav class="bg-white shadow sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 flex justify-center">
+            <button id="nav-market" onclick="switchView('market')" class="active-tab py-4 px-10 font-medium text-lg w-1/2 md:w-auto transition-all">📊 市场动态</button>
+            <button id="nav-competition" onclick="switchView('competition')" class="inactive-tab py-4 px-10 font-medium text-lg w-1/2 md:w-auto transition-all">🏆 竞品分析</button>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="flex-grow py-8 px-4">
+        <div id="app-content" class="max-w-7xl mx-auto">
+            <!-- JavaScript 将在此处渲染内容 -->
+        </div>
+    </main>
+
+    <!-- AI 弹窗 -->
+    <div id="ai-modal" class="fixed inset-0 bg-black/50 z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[85vh]">
+            <div class="p-4 border-b flex justify-between items-center bg-indigo-50 rounded-t-2xl">
+                <h3 class="font-bold text-indigo-900 flex items-center"><span class="mr-2">✨</span> Gemini 智能决策助手</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-black transition">✕</button>
+            </div>
+            <div id="ai-content" class="p-8 overflow-y-auto text-gray-700 leading-relaxed space-y-4 text-lg">
+                <!-- AI 生成的内容 -->
+            </div>
+            <div class="p-4 bg-gray-50 border-t text-right rounded-b-2xl">
+                <button onclick="closeModal()" class="px-8 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 transition font-medium">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-white border-t py-8 text-center">
+        <p class="text-gray-500 text-sm">© 2025 医疗器械市场研究小组 | 本报告由 Gemini 2.5 辅助分析生成</p>
+    </footer>
+
+    <script>
+        // 配置与数据
+        const apiKey = ""; // 环境自动填充
+        const modelId = "gemini-2.5-flash-preview-09-2025";
+        let currentState = { view: 'market', selectedComp: 'philips' };
+
+        const reportData = {
+            market: {
+                intro: "2025年Q4，中国市场受“技耗分离”与“按效果定价”政策深度影响，影像设备市场进入存量博弈与高端化转型的关键期。",
+                items: [
+                    { title: "AI 医疗基建", icon: "🤖", desc: "辅助诊断软件正式纳入医保支付目录，带动设备数智化升级。" },
+                    { title: "本土化 3.0", icon: "🏭", desc: "跨国厂商不仅在华生产，更在华研发，以应对更严格的采购规则。" },
+                    { title: "定价新政", icon: "💰", desc: "心脏 MRI、光子计数 CT 等高端项目获批特需定价。"}
+                ],
+                stats: { labels: ['AI 驱动', '本土化策略', '成本控费', '技术替代'], data: [35, 30, 20, 15] }
+            },
+            competition: {
+                philips: { name: "飞利浦 (PHILIPS)", focus: "光谱 CT 领导力，AI 赋能健康科技", products: ["CT7600", "Azurion"], scores: [9, 8, 9, 7, 6] },
+                ge: { name: "GE 医疗 (GEHC)", focus: "全周期精准医疗，非公市场渗透", products: ["Apex Quantum", "SIGNA Hero"], scores: [8, 9, 9, 9, 7] },
+                siemens: { name: "西门子 (SIEMENS)", focus: "光子计数 CT 标杆，ESG 绿色医疗", products: ["NAEOTOM Alpha", "Free.Max"], scores: [8, 8, 8, 10, 6] },
+                united: { name: "联影医疗 (UI)", focus: "国产高端突破，产研医深度协同", products: ["uMR Jupiter", "uCT 960+"], scores: [9, 10, 6, 9, 8] }
+            }
+        };
+
+        // API 调用函数
+        async function fetchAIAnalysis(prompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                const result = await response.json();
+                return result.candidates[0].content.parts[0].text;
+            } catch (err) {
+                return "抱歉，分析引擎目前忙碌，请稍后再试。";
+            }
+        }
+
+        // 视图切换
+        function switchView(view) {
+            currentState.view = view;
+            document.getElementById('nav-market').className = view === 'market' ? 'active-tab py-4 px-10 font-medium text-lg w-1/2 md:w-auto transition-all' : 'inactive-tab py-4 px-10 font-medium text-lg w-1/2 md:w-auto transition-all';
+            document.getElementById('nav-competition').className = view === 'competition' ? 'active-tab py-4 px-10 font-medium text-lg w-1/2 md:w-auto transition-all' : 'inactive-tab py-4 px-10 font-medium text-lg w-1/2 md:w-auto transition-all';
+            render();
+        }
+
+        // 渲染主函数
+        function render() {
+            const container = document.getElementById('app-content');
+            container.innerHTML = '';
+            container.classList.add('fade-in');
+
+            if (currentState.view === 'market') {
+                renderMarket(container);
+            } else {
+                renderCompetition(container);
+            }
+        }
+
+        function renderMarket(container) {
+            container.innerHTML = `
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0">
+                        <h2 class="text-xl font-bold text-gray-800">📌 市场综述</h2>
+                        <p class="text-gray-600 mt-2">${reportData.market.intro}</p>
+                    </div>
+                    <button onclick="marketDeepDive()" class="px-6 py-3 bg-teal-50 text-teal-700 rounded-xl font-bold hover:bg-teal-100 transition border border-teal-200">✨ 深度趋势推演</button>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-6">
+                        ${reportData.market.items.map(i => `
+                            <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-teal-500 hover:shadow-md transition">
+                                <div class="flex items-center">
+                                    <span class="text-3xl mr-4">${i.icon}</span>
+                                    <div>
+                                        <h3 class="font-bold text-lg">${i.title}</h3>
+                                        <p class="text-sm text-gray-500 mt-1">${i.desc}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-sm flex flex-col items-center">
+                        <h3 class="font-bold mb-6 text-gray-800">Q4 行业驱动力占比</h3>
+                        <div class="chart-container">
+                            <canvas id="marketChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            `;
+            initMarketChart();
+        }
+
+        function renderCompetition(container) {
+            const compKeys = Object.keys(reportData.competition);
+            const active = reportData.competition[currentState.selectedComp];
+
+            container.innerHTML = `
+                <div class="flex flex-wrap gap-2 mb-6">
+                    ${compKeys.map(k => `
+                        <button onclick="currentState.selectedComp='${k}';render();" 
+                                class="px-6 py-3 rounded-xl font-bold transition-all ${currentState.selectedComp === k ? 'bg-teal-600 text-white shadow-lg' : 'bg-white text-gray-500 hover:bg-gray-100'}">
+                            ${reportData.competition[k].name}
+                        </button>
+                    `).join('')}
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <div class="space-y-8">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-3xl font-bold text-gray-900">${active.name}</h2>
+                                <button onclick="competitorDeepDive('${active.name}')" class="text-sm px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 font-bold transition">✨ 战略推演</button>
+                            </div>
+                            <div class="bg-gray-50 p-6 rounded-xl border border-gray-100">
+                                <h4 class="font-bold text-teal-800 mb-2">📢 传播焦点 (MarCom Focus)</h4>
+                                <p class="text-gray-700 leading-relaxed">${active.focus}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 mb-3">🆕 核心产品 (Key NPIs)</h4>
+                            <div class="flex flex-wrap gap-3">
+                                ${active.products.map(p => `<span class="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg font-bold text-sm border border-blue-100">${p}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-2xl flex flex-col items-center">
+                        <h4 class="font-bold mb-4 text-gray-700">战略竞争力模型</h4>
+                        <div class="chart-container">
+                            <canvas id="compChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            `;
+            initCompChart(active);
+        }
+
+        // 图表初始化
+        function initMarketChart() {
+            setTimeout(() => {
+                const ctx = document.getElementById('marketChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: reportData.market.stats.labels,
+                        datasets: [{
+                            data: reportData.market.stats.data,
+                            backgroundColor: ['#0F766E', '#0EA5E9', '#F59E0B', '#6366F1'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                });
+            }, 0);
+        }
+
+        function initCompChart(compData) {
+            setTimeout(() => {
+                const ctx = document.getElementById('compChart').getContext('2d');
+                if (window.activeRadar) window.activeRadar.destroy();
+                window.activeRadar = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['AI 技术', '本土化', 'CSR', '新品发布', '生态协作'],
+                        datasets: [{
+                            label: compData.name,
+                            data: compData.scores,
+                            backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                            borderColor: '#0EA5E9',
+                            pointBackgroundColor: '#0EA5E9'
+                        }]
+                    },
+                    options: { 
+                        maintainAspectRatio: false, 
+                        scales: { r: { suggestMin: 0, suggestMax: 10, ticks: { display: false } } }
+                    }
+                });
+            }, 0);
+        }
+
+        // AI 功能触发
+        async function generateSummary() {
+            openModal("正在处理整份报告，为您提炼 Q4 核心洞察...");
+            const res = await fetchAIAnalysis("分析2025年Q4医疗设备报告，给出3条给营销高管的战略建议。要求简洁有力。");
+            updateModal(res);
+        }
+
+        async function marketDeepDive() {
+            openModal("正在分析政策与趋势的深层关联...");
+            const res = await fetchAIAnalysis("分析中国医疗设备'技耗分离'政策对高端影像设备市场的长远影响，并预测2026年的竞争趋势。");
+            updateModal(res);
+        }
+
+        async function competitorDeepDive(name) {
+            openModal(`正在深度研判 ${name} 的竞争策略...`);
+            const res = await fetchAIAnalysis(`针对 ${name} 目前的 MarCom 策略和产品组合，分析其在面对国产替代潮时的优劣势。`);
+            updateModal(res);
+        }
+
+        // 弹窗逻辑
+        function openModal(text) {
+            const modal = document.getElementById('ai-modal');
+            const content = document.getElementById('ai-content');
+            content.innerHTML = `<div class="flex flex-col items-center py-12"><div class="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div><p class="text-indigo-600 font-bold animate-pulse">${text}</p></div>`;
+            modal.classList.remove('hidden');
+        }
+
+        function updateModal(text) {
+            const content = document.getElementById('ai-content');
+            const formatted = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            content.innerHTML = `<div class="fade-in">${formatted}</div>`;
+        }
+
+        function closeModal() { document.getElementById('ai-modal').classList.add('hidden'); }
+
+        // 启动
+        render();
+    </script>
+</body>
+</html>
