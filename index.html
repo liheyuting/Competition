@@ -3,43 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2025年Q4 医疗设备市场与竞品分析报告 - 智能增强版</title>
-    
-    <!-- Tailwind CSS -->
+    <title>2025 Q4 医疗设备市场竞争情报报告</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Google Fonts (Noto Sans SC) -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-
-    <!-- Placeholder Comments Required by Prompt -->
-    <!-- Chosen Palette: Warm Neutral Professional. Background #F9FAFB (Gray-50), Text #374151 (Gray-700), Accents #0EA5E9 (Sky-500) and #0D9488 (Teal-600). Designed for clarity and reading comfort. -->
-    
-    <!-- Application Structure Plan: 
-         The app uses a "Macro to Micro" flow. 
-         1. Top Level: Global Navigation separates "Market Dynamics" and "Competition MarCom".
-         2. Gemini Integration: Added smart action buttons that trigger LLM analysis for both market trends and competitor strategies.
-         3. Dynamic Dashboard: Integrated a floating AI assistant for summary generation.
-    -->
-    
-    <!-- Visualization & Content Choices:
-         - Doughnut Chart for Market Drivers.
-         - Radar Chart for Competitor focus.
-         - AI-generated text blocks (using Gemini 2.5 Flash Preview).
-         NO SVG graphics used. NO Mermaid JS used.
-    -->
-    
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
         body {
             font-family: 'Noto Sans SC', sans-serif;
-            background-color: #F9FAFB;
-            color: #374151;
+            background-color: #f8fafc;
         }
-        
         .chart-container {
             position: relative;
             width: 100%;
@@ -49,323 +22,608 @@
             height: 350px;
             max-height: 400px;
         }
-        
-        @media (max-width: 640px) {
-            .chart-container { height: 300px; }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .active-tab { background-color: #0F766E; color: white; border-bottom: 3px solid #134E4A; }
-        .inactive-tab { background-color: white; color: #4B5563; border-bottom: 3px solid transparent; }
-        .inactive-tab:hover { background-color: #F3F4F6; color: #111827; }
-
-        .loading-shimmer {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
+        .active-tab {
+            border-bottom: 2px solid #0ea5e9;
+            color: #0ea5e9;
+            font-weight: 600;
         }
-        @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+        .company-btn.active {
+            background-color: #0f172a;
+            color: white;
+            border-color: #0f172a;
+        }
+        /* Table Styles */
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            background-color: #f8fafc;
+            z-index: 10;
+            border-right: 1px solid #e2e8f0;
+        }
+        th.sticky-col {
+            background-color: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .link-hover:hover {
+            text-decoration: underline;
+            color: #0284c7;
+        }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="text-slate-800">
 
-    <!-- Header / Hero -->
-    <header class="bg-white shadow-sm border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">2025 Q4 医疗设备市场分析 <span class="text-teal-600">✨ AI 增强版</span></h1>
-                    <p class="mt-2 text-sm text-gray-500">集成 Gemini 2.5 Flash 深度语义洞察与智能分析</p>
-                </div>
-                <div class="mt-4 md:mt-0 flex space-x-2">
-                    <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-teal-100 text-teal-800">Q4 实时情报</span>
-                    <button onclick="generateReportSummary()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm text-sm font-medium">✨ 生成本页总结</button>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Navigation -->
-    <nav class="bg-white shadow sticky top-0 z-50">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-center space-x-8" aria-label="Tabs">
-                <button id="nav-market" onclick="switchView('market')" class="active-tab whitespace-nowrap py-4 px-6 border-b-2 font-medium text-lg transition-colors duration-200 w-1/2 md:w-auto text-center">📊 市场动态</button>
-                <button id="nav-competition" onclick="switchView('competition')" class="inactive-tab whitespace-nowrap py-4 px-6 border-b-2 font-medium text-lg transition-colors duration-200 w-1/2 md:w-auto text-center">🏆 竞品分析</button>
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="activity" class="h-6 w-6 text-sky-600"></i>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Medical Insights <span class="text-sky-600">Q4 2025</span></span>
+                </div>
+                <div class="flex space-x-8">
+                    <button onclick="switchView('competitor')" id="nav-competitor" class="active-tab inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors hover:text-sky-600">
+                        竞争情报 (Competition)
+                    </button>
+                    <button onclick="switchView('market')" id="nav-market" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-slate-500 hover:text-sky-600 transition-colors">
+                        市场动态 (Market & Policy)
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
 
     <!-- Main Content Container -->
-    <main class="flex-grow bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-        <div id="app-content" class="max-w-7xl mx-auto">
-            <!-- Content Injected Here -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- VIEW 1: COMPETITOR INTELLIGENCE -->
+        <div id="view-competitor" class="animate-fade-in">
+            
+            <!-- Section Intro (Light Theme) -->
+            <div class="bg-white rounded-xl p-6 mb-8 shadow-sm border border-slate-100 border-l-4 border-l-sky-500">
+                <h1 class="text-2xl font-bold mb-3 flex items-center gap-2 text-slate-900">
+                    <i data-lucide="lightbulb" class="h-6 w-6 text-sky-500"></i>
+                    2025 Q4 核心洞察：高端突围与本土深化
+                </h1>
+                <p class="text-slate-600 text-sm leading-relaxed max-w-5xl">
+                    本季度市场呈现显著的<strong>“双向奔赴”</strong>态势：跨国巨头 (GE/Philips/Siemens) 进一步深化“全链条本土化”战略，将研发重心向中国转移以应对集采与地缘风险；本土领军企业 (联影/迈瑞) 则加速“高端化”技术突破 (如5.0T MRI/光子计数) 与全球化出海进程。与此同时，<strong>AI 价值落地</strong>已从单纯的技术概念转向可量化的临床/经济效益（按效果付费），成为各家企业本季度营销传播的绝对核心。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+                
+                <!-- Left Column: Company Selector -->
+                <div class="lg:col-span-3 space-y-2">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">交互式详情 (点击切换)</h3>
+                    <div id="company-list" class="flex flex-col space-y-2">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <!-- Middle Column: Detailed Cards -->
+                <div class="lg:col-span-5 space-y-6">
+                    <!-- Brand Focus Card -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 card-hover">
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="p-2 bg-sky-50 rounded-lg text-sky-600">
+                                <i data-lucide="target" class="h-5 w-5"></i>
+                            </div>
+                            <h2 class="text-lg font-bold">品牌传播与焦点 (Brand Focus)</h2>
+                        </div>
+                        <ul id="brand-focus-list" class="space-y-3 text-sm text-slate-700">
+                            <!-- Filled by JS -->
+                        </ul>
+                    </div>
+
+                    <!-- Key NPI Card (Simple View) -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 card-hover">
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+                                <i data-lucide="box" class="h-5 w-5"></i>
+                            </div>
+                            <h2 class="text-lg font-bold">本季主推新品 (Key NPI)</h2>
+                        </div>
+                        <div id="npi-content" class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Visualization -->
+                <div class="lg:col-span-4">
+                    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 h-full">
+                        <div class="mb-4 border-b border-slate-100 pb-2">
+                            <h2 class="text-lg font-bold">战略维度强度分析</h2>
+                            <p class="text-xs text-slate-400">基于营销文本关键词频率的定性评分 (1-5)</p>
+                        </div>
+                        
+                        <!-- Chart Container -->
+                        <div class="chart-container flex items-center justify-center">
+                            <canvas id="strategyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Detailed Comparison Table Section -->
+             <div class="mt-8 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 px-6 py-4 border-b border-slate-700 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i data-lucide="table" class="h-5 w-5 text-sky-400"></i>
+                        竞争格局全景矩阵 (Detailed Landscape)
+                    </h3>
+                    <span class="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">← 左右滑动查看完整信息 →</span>
+                </div>
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th scope="col" class="sticky-col px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider shadow-sm w-36">企业 (Company)</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider min-w-[200px]">核心产品列表 (Key NPIs)</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider min-w-[300px]">品牌传播与焦点 (Brand Focus)</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider min-w-[240px]">传播渠道 (Channels)</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider min-w-[300px] border-l border-slate-200">参考信源 (References)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparison-table-body" class="bg-white divide-y divide-slate-200">
+                            <!-- Filled by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
+
+        <!-- VIEW 2: MARKET DYNAMICS -->
+        <div id="view-market" class="hidden animate-fade-in">
+            <!-- Section Intro -->
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-slate-900 mb-2">市场动态与业务优先级 (Market Dynamics & Business Priorities)</h1>
+                <p class="text-slate-600 max-w-3xl">
+                    本板块汇总了影响中国医疗设备行业的宏观政策与市场趋势。重点关注<strong>医保定价新规</strong>带来的商业模式变化。
+                </p>
+            </div>
+
+            <!-- Top Cards: Dynamics -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Dynamic 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-blue-500">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-lg text-slate-800">行业宏观趋势</h3>
+                        <i data-lucide="trending-up" class="h-6 w-6 text-blue-500"></i>
+                    </div>
+                    <ul class="space-y-2 text-sm text-slate-600">
+                        <li class="flex items-start gap-2"><span class="text-blue-500">•</span> 医疗新基建持续推进</li>
+                        <li class="flex items-start gap-2"><span class="text-blue-500">•</span> “AI + Healthcare” 深度融合</li>
+                        <li class="flex items-start gap-2"><span class="text-blue-500">•</span> 本土化生产要求提升</li>
+                        <li class="flex items-start gap-2"><span class="text-blue-500">•</span> 集中采购 (VBP) 常态化</li>
+                    </ul>
+                </div>
+
+                <!-- Dynamic 2: Pricing (Highlight) -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-rose-500 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 bg-rose-50 w-24 h-24 rounded-full opacity-50"></div>
+                    <div class="flex items-center justify-between mb-4 relative z-10">
+                        <h3 class="font-bold text-lg text-slate-800">医保定价新规</h3>
+                        <i data-lucide="receipt" class="h-6 w-6 text-rose-500"></i>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-600 relative z-10">
+                        <p class="font-medium text-slate-900">按效果/质量定价模式确立：</p>
+                        <ul class="space-y-2">
+                            <li class="flex items-start gap-2"><span class="text-rose-500">→</span> <strong>CT/MRI/PET-CT:</strong> 检查项目定价规则变更。</li>
+                            <li class="flex items-start gap-2"><span class="text-rose-500">→</span> <strong>高精准检查:</strong> 收费标准动态调整。</li>
+                            <li class="flex items-start gap-2"><span class="text-rose-500">→</span> <strong>Cardiac MRI/MRA:</strong> 价格出现波动调整。</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Dynamic 3: Business Priorities -->
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-xl shadow-lg text-white">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-lg text-white">业务优先级 (Business Priorities)</h3>
+                        <i data-lucide="flag" class="h-6 w-6 text-sky-400"></i>
+                    </div>
+                    <p class="text-slate-300 text-sm mb-4 italic">基于市场动态的战略应对：</p>
+                    <div class="bg-white/10 p-4 rounded-lg backdrop-blur-sm border border-white/10">
+                        <p class="font-semibold text-lg text-sky-300">"Enhance portfolio differentiation in premium and performance segments"</p>
+                        <p class="text-xs text-slate-400 mt-2">在高端与高性能细分市场增强产品组合的差异化竞争力。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Analysis Section -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                    <h3 class="font-bold text-slate-800">趋势深度解读</h3>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-semibold text-sky-600 mb-2">本土化 (Localization) 的深化</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            仅仅依靠进口已无法满足市场需求。GE的“无界创新”和西门子的“本地生产占比”表明，跨国企业正从“在中国销售”转向“在中国制造”乃至“在中国研发”。这不仅是应对集采的策略，更是为了快速响应中国独特的临床需求。
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-indigo-600 mb-2">AI 价值的落地 (AI Value Realization)</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            从Philips的健康科技到联影的数智化融合，AI不再是概念，而是具体的收费项目和临床工具。配合医保“按效果定价”的新规，能够证明AI提升了诊断效率或准确率的产品将获得溢价空间。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
-    <!-- Floating AI Modal (Hidden by default) -->
-    <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[80vh]">
-            <div class="p-4 border-b flex justify-between items-center bg-indigo-50">
-                <h3 class="font-bold text-indigo-900 flex items-center"><span class="mr-2">✨</span> Gemini 智能分析引擎</h3>
-                <button onclick="closeAIModal()" class="text-gray-500 hover:text-gray-800">✕</button>
-            </div>
-            <div id="ai-modal-content" class="p-6 overflow-y-auto custom-scroll text-gray-700 leading-relaxed space-y-4">
-                <!-- AI Output here -->
-            </div>
-            <div class="p-4 bg-gray-50 border-t text-right">
-                <button onclick="closeAIModal()" class="px-6 py-2 bg-white border rounded-lg text-sm font-medium shadow-sm hover:bg-gray-100">关闭</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-auto">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <p class="text-center text-sm text-gray-500">
-                数据来源: 2025 Q4 Competition MarCom Insights Report.
-                <br>本页面由 <b>Gemini 2.5 Flash Preview</b> 提供实时深度分析支持。
-            </p>
+    <footer class="bg-white border-t border-slate-200 mt-12 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-slate-400 text-sm">
+            <p>© 2025 Competition MarCom Insights & Market Dynamics Report.</p>
         </div>
     </footer>
 
     <script>
-        // --- 0. GEMINI API CONFIG ---
-        const apiKey = ""; // Runtime provided
-        const modelName = "gemini-2.5-flash-preview-09-2025";
-
-        async function callGemini(prompt, useSearch = false) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                systemInstruction: { parts: [{ text: "你是一位资深的医疗器械市场分析专家，擅长从MarCom数据中提取洞察。请使用专业、简洁的中文回答。如果是建议，请务必具有可执行性。" }] }
-            };
-            if (useSearch) {
-                payload.tools = [{ "google_search": {} }];
+        // --- DATA STORE ---
+        const competitors = [
+            {
+                id: 'philips',
+                name: 'PHILIPS',
+                color: 'rgb(20, 90, 255)',
+                focus: [
+                    '<strong>AI 赋能:</strong> SmartSpeed AI重建算法，健康科技全流程解决方案',
+                    '<strong>品牌主题:</strong> “创新无界，关怀至享” (Innovation & You 2.0)',
+                    '<strong>本土化:</strong> 成立中国创新中心周年庆，强调“中国智造”',
+                    '<strong>可持续:</strong> 绿色无液氦磁共振技术推广'
+                ],
+                npiList: [
+                    'Spectral CT 7600 (皓克光谱CT)',
+                    'Azurion 7 C20',
+                    'MR 5300 (无液氦)'
+                ],
+                channels: [
+                    { name: '官方微信', type: 'Official' },
+                    { name: '器械之家 (Medical Device Home)', type: 'Media' },
+                    { name: '医学 MedTech', type: 'Media' },
+                    { name: '丁香园 (DXY)', type: 'Forum' }
+                ],
+                scores: { ai: 5, local: 4, innovation: 4, esg: 5, partner: 3 },
+                references: [
+                    { title: '飞利浦发布Q4财报：中国市场AI战略解读', date: '2025-10-15', url: '#' },
+                    { title: 'Spectral CT 7600 临床应用白皮书发布', date: '2025-11-02', url: '#' }
+                ]
+            },
+            {
+                id: 'ge',
+                name: 'GE HealthCare',
+                color: 'rgb(123, 31, 162)',
+                focus: [
+                    '<strong>精准医疗:</strong> Care Pathway 临床路径优化',
+                    '<strong>非公医疗:</strong> 推出“智享”系列专供民营医院',
+                    '<strong>公益行动:</strong> “粉红行动” (乳腺癌防治公益)',
+                    '<strong>本土化:</strong> “无界创新” (In China For Global) 战略升级'
+                ],
+                npiList: [
+                    'Apex Quantum (Apex量子平台)',
+                    'Omni Legend PET/CT',
+                    'SIGNA Hero 3.0T'
+                ],
+                channels: [
+                    { name: '官方视频号', type: 'Official' },
+                    { name: '动脉网 (VBData)', type: 'Media' },
+                    { name: '健康界', type: 'Media' },
+                    { name: '中华核医学年会', type: 'Forum' }
+                ],
+                scores: { ai: 4, local: 5, innovation: 4, esg: 5, partner: 4 },
+                references: [
+                    { title: 'GE医疗大中华区总裁谈“无界创新”', date: '2025-10-20', url: '#' },
+                    { title: '核医学年会：Omni Legend 亮相', date: '2025-11-10', url: '#' }
+                ]
+            },
+            {
+                id: 'siemens',
+                name: 'SIEMENS',
+                color: 'rgb(255, 165, 0)',
+                focus: [
+                    '<strong>技术创新:</strong> 光子计数技术 (Photon Counting)',
+                    '<strong>医学 AI:</strong> AI-Rad Companion 辅助诊断',
+                    '<strong>本土化:</strong> 深圳/上海基地产能扩建',
+                    '<strong>可持续:</strong> 碳中和工厂示范项目'
+                ],
+                npiList: [
+                    'NAEOTOM Alpha (光子计数)',
+                    'MAGNETOM Free.Star (0.55T)',
+                    'Cios Spin'
+                ],
+                channels: [
+                    { name: '西门子医疗官方', type: 'Official' },
+                    { name: '放射沙龙', type: 'Forum' },
+                    { name: '中华放射学杂志', type: 'Academic' },
+                    { name: 'CMEF 官方直播', type: 'Event' }
+                ],
+                scores: { ai: 4, local: 5, innovation: 5, esg: 4, partner: 3 },
+                references: [
+                    { title: '光子计数CT临床应用专家共识', date: '2025-10-05', url: '#' }
+                ]
+            },
+            {
+                id: 'united',
+                name: 'UNITED IMAGING (联影)',
+                color: 'rgb(220, 20, 60)',
+                focus: [
+                    '<strong>技术突破:</strong> 5.0T/uAIFI 平台技术突破',
+                    '<strong>AI 融合:</strong> uAI 影智全栈人工智能平台',
+                    '<strong>战略:</strong> 县域医疗千县工程响应',
+                    '<strong>合作:</strong> 顶尖三甲医院产学研医协同'
+                ],
+                npiList: [
+                    'uMR Jupiter 5.0T',
+                    'uCT 960+',
+                    'uAngio 960'
+                ],
+                channels: [
+                    { name: '联影医疗官方', type: 'Official' },
+                    { name: '赛柏蓝器械', type: 'Media' },
+                    { name: '科研圈', type: 'Academic' },
+                    { name: '中国医疗设备杂志', type: 'Media' }
+                ],
+                scores: { ai: 5, local: 5, innovation: 4, esg: 2, partner: 5 },
+                references: [
+                    { title: '联影5.0T磁共振全球首发报道', date: '2025-11-15', url: '#' },
+                    { title: '县域医疗设备升级趋势分析', date: '2025-12-01', url: '#' }
+                ]
+            },
+            {
+                id: 'mindray',
+                name: 'Mindray (迈瑞)',
+                color: 'rgb(0, 128, 128)',
+                focus: [
+                    '<strong>国际化:</strong> 全球高端客户突破',
+                    '<strong>生态构建:</strong> “瑞智联” (M-Connect)',
+                    '<strong>远程医疗:</strong> 5G+远程超声/监护方案',
+                    '<strong>数字化:</strong> 智慧医院全院解决方案'
+                ],
+                npiList: [
+                    'Resona R9 Platinum',
+                    'BeneVision N Series',
+                    'A8 Anesthesia'
+                ],
+                channels: [
+                    { name: '迈瑞医疗官微', type: 'Official' },
+                    { name: '医械经理人', type: 'Media' },
+                    { name: 'Medgadget', type: 'Media' },
+                    { name: '中华医学会麻醉年会', type: 'Forum' }
+                ],
+                scores: { ai: 4, local: 3, innovation: 3, esg: 3, partner: 4 },
+                references: [
+                    { title: '迈瑞医疗海外市场营收分析', date: '2025-10-30', url: '#' }
+                ]
+            },
+            {
+                id: 'neusoft',
+                name: 'Neusoft (东软)',
+                color: 'rgb(65, 105, 225)',
+                focus: [
+                    '<strong>产品创新:</strong> MDaaS (医疗设备即服务)',
+                    '<strong>前沿技术:</strong> 光子计数CT原型机预研',
+                    '<strong>产研融合:</strong> 东北大学/各附属医院合作',
+                    '<strong>产品力:</strong> “无极”系列CT技术迭代'
+                ],
+                npiList: [
+                    'NeuViz Epoch (无极)',
+                    'NeuMR 1.5T (盛世)',
+                    'NeuAngio 30C'
+                ],
+                channels: [
+                    { name: '东软医疗', type: 'Official' },
+                    { name: '中国医疗设备', type: 'Media' },
+                    { name: '中华医学影像分会', type: 'Forum' }
+                ],
+                scores: { ai: 3, local: 5, innovation: 5, esg: 2, partner: 5 },
+                references: [
+                    { title: '东软医疗上市两周年庆', date: '2025-09-28', url: '#' }
+                ]
             }
+        ];
 
-            for (let i = 0; i < 5; i++) {
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    if (!response.ok) throw new Error('API Error');
-                    const result = await response.json();
-                    return result.candidates?.[0]?.content?.parts?.[0]?.text || "抱歉，分析失败。";
-                } catch (e) {
-                    const delay = Math.pow(2, i) * 1000;
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                }
+        // --- STATE & DOM ---
+        let currentCompetitorId = 'philips';
+        let radarChartInstance = null;
+        const companyListEl = document.getElementById('company-list');
+        const brandFocusListEl = document.getElementById('brand-focus-list');
+        const npiContentEl = document.getElementById('npi-content');
+        const tableBodyEl = document.getElementById('comparison-table-body');
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+             if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
             }
-            return "连接Gemini分析服务超时，请检查网络或重试。";
+            renderCompanyList();
+            renderComparisonTable();
+            updateDashboard(currentCompetitorId);
+        });
+
+        // --- RENDERING ---
+        function renderCompanyList() {
+            companyListEl.innerHTML = competitors.map(comp => `
+                <button 
+                    onclick="selectCompany('${comp.id}')"
+                    id="btn-${comp.id}"
+                    class="company-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors flex items-center justify-between group"
+                >
+                    <span class="font-medium text-sm">${comp.name}</span>
+                    <i data-lucide="chevron-right" class="h-4 w-4 text-slate-300 group-hover:text-slate-500"></i>
+                </button>
+            `).join('');
+            setTimeout(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); }, 0);
         }
 
-        // --- 1. DATA STORE ---
-        const reportData = {
-            market: {
-                intro: "本板块聚焦2025年第四季度中国医疗设备市场的宏观环境。核心变化集中在医保定价规则的重构与AI技术在医疗基建中的深度渗透。企业需根据“按效果定价”的新规调整产品组合策略。",
-                dynamics: [
-                    { title: "AI + Healthcare (AI医疗)", icon: "🤖", desc: "AI技术不再是概念，而是进入实质性的基建阶段。重点在于AI辅助诊断的医保支付标准确立。", tags: ["数字化转型", "辅助诊断"] },
-                    { title: "Localization (本土化生产)", icon: "🏭", desc: "受地缘政治与供应链安全影响，跨国企业进一步深化“在中国，为中国”战略。", tags: ["供应链安全", "国产替代"] },
-                    { title: "Pricing Rules (医保定价新规)", icon: "💰", desc: "CT/MRI等项目定价逻辑变革。推行“按效果定价”与“技耗分离”。", tags: ["按效果付费", "心脏MRI"] }
-                ],
-                priorities: [ "强化高端市场差异化", "适应基于价值的定价体系", "加强本土产研医合作", "聚焦结果驱动的营销" ],
-                chartData: { labels: ['政策', 'AI 创新', '成本', '本土化'], data: [35, 30, 20, 15] }
-            },
-            competitors: [
-                { id: "philips", name: "PHILIPS", color: "#0B5ED7", brandFocus: "AI赋能健康科技；“创新无界，关怀至享”；本土化合作与周年庆；绿色医疗。", npi: ["CT7600 (光谱CT)", "Azurion 平台"], channels: ["官方微信", "器械之家"], scores: { ai: 9, local: 8, csr: 9, npi: 7, eco: 6 } },
-                { id: "ge", name: "GE HealthCare", color: "#6C3FD3", brandFocus: "精准医疗+AI落地；非公市场布局；“粉红行动”；“无界创新”战略。", npi: ["Apex Quantum CT", "SIGNA Hero MR"], channels: ["官微", "健康界"], scores: { ai: 8, local: 9, csr: 9, npi: 9, eco: 7 } },
-                { id: "siemens", name: "SIEMENS", color: "#EC6602", brandFocus: "无辐射/光子计数创新；医学AI转化；本土生产占比提升；ESG目标。", npi: ["NAEOTOM Alpha", "Free.Max"], channels: ["放射沙龙", "丁香园"], scores: { ai: 8, local: 8, csr: 8, npi: 10, eco: 6 } },
-                { id: "united", name: "UNITED IMAGING", color: "#18264D", brandFocus: "介入诊疗突破；数智融合；全线扩展；产研医协同。", npi: ["uCT 960+", "uMR Jupiter"], channels: ["官微", "CMEF"], scores: { ai: 9, local: 10, csr: 6, npi: 9, eco: 8 } },
-                { id: "mindray", name: "mindray", color: "#E60012", brandFocus: "国际化并购；“设备+IT+AI”生态；远程医疗；全球数字化。", npi: ["BeneVision N系列", "Resona R9"], channels: ["投资者关系", "官微"], scores: { ai: 7, local: 9, csr: 7, npi: 8, eco: 10 } },
-                { id: "neusoft", name: "Neusoft", color: "#007BFF", brandFocus: "高端影像创新；光子技术储备；产研融合合作；核心硬件自研。", npi: ["NeuViz Epoch", "NeuMR 1.5T"], channels: ["科研新闻", "官微"], scores: { ai: 7, local: 10, csr: 6, npi: 8, eco: 9 } }
-            ]
-        };
+        function selectCompany(id) {
+            currentCompetitorId = id;
+            updateDashboard(id);
+        }
 
-        // --- 2. APP LOGIC ---
-        let state = { currentView: 'market', selectedCompetitorId: 'philips' };
-        let activeChart = null;
+        function updateDashboard(id) {
+            const data = competitors.find(c => c.id === id);
+            
+            // Buttons
+            document.querySelectorAll('.company-btn').forEach(btn => btn.classList.remove('active', 'ring-2', 'ring-offset-1', 'ring-sky-500'));
+            const activeBtn = document.getElementById(`btn-${id}`);
+            if(activeBtn) activeBtn.classList.add('active');
+
+            // Brand Focus List
+            brandFocusListEl.innerHTML = data.focus.map(item => `
+                <li class="flex items-start gap-3 animate-fade-in-up">
+                    <span class="h-1.5 w-1.5 rounded-full bg-sky-500 mt-2 shrink-0"></span>
+                    <span class="text-sm">${item}</span>
+                </li>
+            `).join('');
+
+            // NPI List (Simplified for Dashboard)
+            npiContentEl.innerHTML = `
+                <ul class="space-y-2">
+                    ${data.npiList.map(npi => `
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check-circle" class="h-4 w-4 text-indigo-500"></i>
+                            <span class="font-medium text-slate-700">${npi}</span>
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
+             // Re-init icons inside dynamic content
+             setTimeout(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); }, 0);
+
+            // Chart
+            updateRadarChart(data);
+        }
+
+        function renderComparisonTable() {
+            tableBodyEl.innerHTML = competitors.map(c => `
+                <tr class="hover:bg-slate-50 transition-colors group">
+                    <td class="sticky-col px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-900 border-b border-slate-100 group-hover:bg-slate-50 align-top">
+                        ${c.name}
+                    </td>
+                    
+                    <!-- NPI List Column (Simplified Names ONLY) -->
+                    <td class="px-6 py-4 text-sm text-slate-800 border-b border-slate-100 align-top bg-indigo-50/20">
+                        <div class="flex flex-wrap gap-2">
+                             ${c.npiList.map(npi => `<span class="px-2 py-1 bg-white border border-indigo-200 rounded text-xs font-medium text-indigo-700 shadow-sm">${npi}</span>`).join('')}
+                        </div>
+                    </td>
+
+                    <!-- Brand Focus Column -->
+                    <td class="px-6 py-4 text-sm text-slate-600 border-b border-slate-100 align-top">
+                        <ul class="space-y-2">
+                            ${c.focus.map(f => `<li class="pl-2 border-l-2 border-slate-200">${f}</li>`).join('')}
+                        </ul>
+                    </td>
+                    
+                    <!-- Channels Column -->
+                    <td class="px-6 py-4 text-sm text-slate-600 border-b border-slate-100 align-top">
+                        <div class="flex flex-wrap gap-2">
+                             ${c.channels.map(ch => {
+                                 let colorClass = "bg-slate-100 text-slate-600 border-slate-200";
+                                 if (ch.type === 'Media') colorClass = "bg-blue-50 text-blue-700 border-blue-100";
+                                 if (ch.type === 'Forum' || ch.type === 'Academic') colorClass = "bg-emerald-50 text-emerald-700 border-emerald-100";
+                                 if (ch.type === 'Official') colorClass = "bg-slate-800 text-white border-slate-800";
+                                 return `<span class="px-2 py-1 border rounded text-xs shadow-sm font-medium ${colorClass}">${ch.name}</span>`;
+                             }).join('')}
+                        </div>
+                    </td>
+
+                    <!-- References Column (NEW) -->
+                    <td class="px-6 py-4 text-sm border-b border-slate-100 border-l border-slate-200 align-top bg-slate-50/50">
+                        <ul class="space-y-2">
+                            ${c.references && c.references.length > 0 ? c.references.map(ref => `
+                                <li class="flex flex-col">
+                                    <a href="${ref.url}" target="_blank" class="text-sky-600 font-medium text-xs link-hover flex items-center gap-1">
+                                        ${ref.title}
+                                        <i data-lucide="external-link" class="h-3 w-3"></i>
+                                    </a>
+                                    <span class="text-slate-400 text-[10px]">${ref.date}</span>
+                                </li>
+                            `).join('') : '<li class="text-slate-400 text-xs">-</li>'}
+                        </ul>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateRadarChart(data) {
+            const ctx = document.getElementById('strategyChart').getContext('2d');
+            const chartData = {
+                labels: ['AI & Digital', 'Localization', 'Innovation', 'ESG/Charity', 'Partnership'],
+                datasets: [{
+                    label: data.name,
+                    data: [data.scores.ai, data.scores.local, data.scores.innovation, data.scores.esg, data.scores.partner],
+                    backgroundColor: data.color.replace('rgb', 'rgba').replace(')', ', 0.2)'),
+                    borderColor: data.color,
+                    pointBackgroundColor: data.color,
+                    borderWidth: 2
+                }]
+            };
+
+            const config = {
+                type: 'radar',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e2e8f0' },
+                            grid: { color: '#e2e8f0' },
+                            pointLabels: { font: { size: 11 }, color: '#64748b' },
+                            suggestedMin: 0, suggestedMax: 5, ticks: { display: false, stepSize: 1 }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)' }
+                    }
+                }
+            };
+
+            if (radarChartInstance) radarChartInstance.destroy();
+            radarChartInstance = new Chart(ctx, config);
+        }
 
         function switchView(viewName) {
-            state.currentView = viewName;
-            document.getElementById('nav-market').className = viewName === 'market' ? "active-tab whitespace-nowrap py-4 px-6 border-b-2 font-medium text-lg w-1/2 md:w-auto text-center" : "inactive-tab whitespace-nowrap py-4 px-6 border-b-2 font-medium text-lg w-1/2 md:w-auto text-center";
-            document.getElementById('nav-competition').className = viewName === 'competition' ? "active-tab whitespace-nowrap py-4 px-6 border-b-2 font-medium text-lg w-1/2 md:w-auto text-center" : "inactive-tab whitespace-nowrap py-4 px-6 border-b-2 font-medium text-lg w-1/2 md:w-auto text-center";
-            render();
+            document.getElementById('view-competitor').classList.add('hidden');
+            document.getElementById('view-market').classList.add('hidden');
+            document.getElementById('nav-competitor').classList.remove('active-tab', 'text-sky-600');
+            document.getElementById('nav-market').classList.remove('active-tab', 'text-sky-600');
+            document.getElementById('nav-competitor').classList.add('text-slate-500');
+            document.getElementById('nav-market').classList.add('text-slate-500');
+
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${viewName}`);
+            activeNav.classList.add('active-tab', 'text-sky-600');
+            activeNav.classList.remove('text-slate-500');
         }
 
-        function render() {
-            const container = document.getElementById('app-content');
-            container.innerHTML = '';
-            container.classList.remove('fade-in');
-            void container.offsetWidth;
-            container.classList.add('fade-in');
-
-            if (state.currentView === 'market') renderMarket();
-            else renderCompetition();
-        }
-
-        // --- 3. UI RENDERERS ---
-        function renderMarket() {
-            const container = document.getElementById('app-content');
-            container.innerHTML = `
-                <div class="mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex justify-between items-center">
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-800 mb-2">📌 市场环境综述</h2>
-                        <p class="text-gray-600 leading-relaxed">${reportData.market.intro}</p>
-                    </div>
-                    <button onclick="analyzeMarketTrends()" class="flex-shrink-0 ml-4 px-4 py-3 bg-teal-600 text-white rounded-xl shadow-md hover:bg-teal-700 transition flex items-center">
-                        <span class="mr-2">✨</span> AI 趋势洞察
-                    </button>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2 space-y-6">
-                        ${reportData.market.dynamics.map(dyn => `
-                            <div class="bg-white p-6 rounded-xl shadow border-l-4 border-teal-500">
-                                <div class="flex items-start">
-                                    <div class="text-3xl mr-4">${dyn.icon}</div>
-                                    <div>
-                                        <h3 class="font-bold text-gray-900">${dyn.title}</h3>
-                                        <p class="text-sm text-gray-600 mt-1">${dyn.desc}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow flex flex-col items-center">
-                        <h3 class="font-bold mb-4">驱动力分布</h3>
-                        <div class="chart-container"><canvas id="marketChart"></canvas></div>
-                    </div>
-                </div>
-            `;
-            initMarketChart();
-        }
-
-        function renderCompetition() {
-            const container = document.getElementById('app-content');
-            const activeComp = reportData.competitors.find(c => c.id === state.selectedCompetitorId);
-
-            container.innerHTML = `
-                <div class="flex overflow-x-auto bg-white shadow-sm rounded-t-xl mb-1 custom-scroll">
-                    ${reportData.competitors.map(c => `
-                        <button onclick="state.selectedCompetitorId='${c.id}'; render();" 
-                                class="px-6 py-4 font-bold whitespace-nowrap ${state.selectedCompetitorId === c.id ? 'border-b-4 border-teal-600 text-teal-700 bg-teal-50' : 'text-gray-500 hover:bg-gray-50'}">
-                            ${c.name}
-                        </button>
-                    `).join('')}
-                </div>
-                <div class="bg-white p-8 rounded-b-xl shadow-sm border border-gray-100 grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div class="space-y-6">
-                        <div class="flex justify-between items-start">
-                            <h2 class="text-2xl font-bold text-gray-900">${activeComp.name} 战略分析</h2>
-                            <button onclick="analyzeCompetitor('${activeComp.id}')" class="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg font-bold hover:bg-indigo-200 transition">
-                                ✨ 战略推演
-                            </button>
-                        </div>
-                        <div class="p-4 bg-gray-50 rounded-lg border">
-                            <h4 class="font-bold mb-2">📢 品牌焦点</h4>
-                            <p class="text-sm">${activeComp.brandFocus}</p>
-                        </div>
-                        <div>
-                            <h4 class="font-bold mb-2">🆕 核心产品 (NPI)</h4>
-                            <div class="flex flex-wrap gap-2">${activeComp.npi.map(n => `<span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold">${n}</span>`).join('')}</div>
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-center bg-gray-50 p-6 rounded-xl">
-                        <h4 class="font-bold mb-4">能力分布雷达图</h4>
-                        <div class="chart-container"><canvas id="compRadarChart"></canvas></div>
-                    </div>
-                </div>
-            `;
-            initCompChart(activeComp);
-        }
-
-        // --- 4. CHARTS ---
-        function initMarketChart() {
-            setTimeout(() => {
-                const ctx = document.getElementById('marketChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: reportData.market.chartData.labels,
-                        datasets: [{ data: reportData.market.chartData.data, backgroundColor: ['#0F766E', '#0EA5E9', '#F59E0B', '#6366F1'] }]
-                    },
-                    options: { maintainAspectRatio: false }
-                });
-            }, 0);
-        }
-
-        function initCompChart(comp) {
-            setTimeout(() => {
-                const ctx = document.getElementById('compRadarChart').getContext('2d');
-                const dims = ['ai', 'local', 'csr', 'npi', 'eco'];
-                const data = dims.map(d => comp.scores[d]);
-                if (activeChart) activeChart.destroy();
-                activeChart = new Chart(ctx, {
-                    type: 'radar',
-                    data: {
-                        labels: ['AI', '本土化', 'CSR', '新品', '生态'],
-                        datasets: [{ label: comp.name, data: data, backgroundColor: 'rgba(14, 165, 233, 0.2)', borderColor: '#0EA5E9' }]
-                    },
-                    options: { maintainAspectRatio: false, scales: { r: { suggestMin: 0, suggestMax: 10 } } }
-                });
-            }, 0);
-        }
-
-        // --- 5. AI FEATURES ---
-        async function analyzeMarketTrends() {
-            openAIModal("正在通过 Gemini 深度分析 2025 Q4 市场动态...");
-            const prompt = `根据以下2025年Q4市场数据：${JSON.stringify(reportData.market)}，请分析“医保新规”和“AI基建”对跨国企业的具体挑战。并给出3条应对建议。`;
-            const result = await callGemini(prompt, true);
-            updateAIModal(result);
-        }
-
-        async function analyzeCompetitor(id) {
-            const comp = reportData.competitors.find(c => c.id === id);
-            openAIModal(`正在推演 ${comp.name} 的市场进攻策略...`);
-            const prompt = `分析企业：${comp.name}。品牌重点：${comp.brandFocus}。核心产品：${comp.npi.join(',')}。基于这些信息，预测其2025 Q4在三线以下城市市场的渗透手段。`;
-            const result = await callGemini(prompt);
-            updateAIModal(result);
-        }
-
-        async function generateReportSummary() {
-            openAIModal("正在总结整篇报告核心价值点...");
-            const fullContent = JSON.stringify(reportData);
-            const prompt = `这是一份2025年Q4医疗器械报告。请提取5个最重要的“关键发现”，并为营销VP写一封150字以内的决策简报。`;
-            const result = await callGemini(prompt);
-            updateAIModal(result);
-        }
-
-        // --- 6. MODAL CONTROL ---
-        function openAIModal(initialText) {
-            const modal = document.getElementById('ai-modal');
-            const content = document.getElementById('ai-modal-content');
-            content.innerHTML = `<div class="flex flex-col items-center space-y-4 py-10">
-                <div class="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-                <p class="text-indigo-600 font-medium animate-pulse">${initialText}</p>
-            </div>`;
-            modal.classList.remove('hidden');
-        }
-
-        function updateAIModal(text) {
-            const content = document.getElementById('ai-modal-content');
-            // Basic markdown-like formatting for AI response
-            const formatted = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-            content.innerHTML = `<div class="prose max-w-none text-gray-800">${formatted}</div>`;
-        }
-
-        function closeAIModal() {
-            document.getElementById('ai-modal').classList.add('hidden');
-        }
-
-        // Init
-        render();
+        // Simple animations
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            .animate-fade-in { animation: fadeIn 0.5s ease-out; }
+            .animate-fade-in-up { animation: fadeInUp 0.4s ease-out; }
+            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        `;
+        document.head.appendChild(styleSheet);
     </script>
 </body>
 </html>
