@@ -3,154 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2025 Q4 医疗设备市场竞争情报报告</title>
+    <title>2025 Q4 Market Intelligence Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
-        body {
-            font-family: 'Noto Sans SC', sans-serif;
-            background-color: #f8fafc;
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 350px;
-            max-height: 400px;
-        }
-        .card-hover:hover {
-            transform: translateY(-2px);
-            transition: all 0.2s ease-in-out;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .active-tab {
-            border-bottom: 2px solid #0ea5e9;
-            color: #0ea5e9;
-            font-weight: 600;
-        }
-        .company-btn.active {
-            background-color: #0f172a;
-            color: white;
-            border-color: #0f172a;
-        }
-        /* Table Styles */
-        .sticky-col {
-            position: sticky;
-            left: 0;
-            background-color: #f8fafc;
-            z-index: 10;
-            border-right: 1px solid #e2e8f0;
-        }
-        th.sticky-col {
-            background-color: #f1f5f9;
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-            height: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        .link-hover:hover {
-            text-decoration: underline;
-            color: #0284c7;
-        }
+        body { font-family: 'Noto Sans SC', sans-serif; background-color: #f8fafc; }
+        
+        /* 布局与卡片基础 */
+        .card-hover:hover { transform: translateY(-2px); transition: all 0.2s ease-in-out; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin: 0 auto; height: 350px; max-height: 400px; }
+        
+        /* 导航栏状态 */
+        .active-tab { border-bottom: 2px solid #0ea5e9; color: #0ea5e9; font-weight: 600; }
+        .company-btn.active { background-color: #0f172a; color: white; border-color: #0f172a; }
+        
+        /* 表格样式 */
+        .sticky-col { position: sticky; left: 0; background-color: #f8fafc; z-index: 10; border-right: 1px solid #e2e8f0; }
+        .custom-scrollbar::-webkit-scrollbar { height: 8px; width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        /* 新品列表滚动条 (防止产品太多撑破卡片) */
+        .npi-scroll-container { max-height: 320px; overflow-y: auto; }
     </style>
 </head>
 <body class="text-slate-800">
 
-    <!-- Navigation Bar -->
     <nav class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center gap-3">
                     <i data-lucide="activity" class="h-6 w-6 text-sky-600"></i>
-                    <span class="font-bold text-xl tracking-tight text-slate-900">Medical Insights <span class="text-sky-600">Q4 2025</span></span>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Medical Insights <span class="text-sky-600" id="report-period">Q4 2025</span></span>
                 </div>
                 <div class="flex space-x-8">
-                    <button onclick="switchView('competitor')" id="nav-competitor" class="active-tab inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors hover:text-sky-600">
-                        竞争情报 (Competition)
-                    </button>
-                    <button onclick="switchView('market')" id="nav-market" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-slate-500 hover:text-sky-600 transition-colors">
-                        市场动态 (Market & Policy)
-                    </button>
+                    <button onclick="switchView('competitor')" id="nav-competitor" class="active-tab inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors hover:text-sky-600">竞争情报 (Competition)</button>
+                    <button onclick="switchView('market')" id="nav-market" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-slate-500 hover:text-sky-600 transition-colors">市场动态 (Market & Policy)</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- VIEW 1: COMPETITOR INTELLIGENCE -->
         <div id="view-competitor" class="animate-fade-in">
-            
-            <!-- Section Intro (Light Theme) -->
             <div class="bg-white rounded-xl p-6 mb-8 shadow-sm border border-slate-100 border-l-4 border-l-sky-500">
-                <h1 class="text-2xl font-bold mb-3 flex items-center gap-2 text-slate-900">
-                    <i data-lucide="lightbulb" class="h-6 w-6 text-sky-500"></i>
-                    2025 Q4 核心洞察：高端突围与本土深化
-                </h1>
-                <p class="text-slate-600 text-sm leading-relaxed max-w-5xl">
-                    本季度市场呈现显著的<strong>“双向奔赴”</strong>态势：跨国巨头 (GE/Philips/Siemens) 进一步深化“全链条本土化”战略，将研发重心向中国转移以应对集采与地缘风险；本土领军企业 (联影/迈瑞) 则加速“高端化”技术突破 (如5.0T MRI/光子计数) 与全球化出海进程。与此同时，<strong>AI 价值落地</strong>已从单纯的技术概念转向可量化的临床/经济效益（按效果付费），成为各家企业本季度营销传播的绝对核心。
-                </p>
+                <h1 class="text-2xl font-bold mb-2 text-slate-900" id="comp-summary-title">Loading...</h1>
+                <p class="text-slate-600 text-sm leading-relaxed" id="comp-summary-text">Loading...</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
-                
-                <!-- Left Column: Company Selector -->
                 <div class="lg:col-span-3 space-y-2">
-                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">交互式详情 (点击切换)</h3>
-                    <div id="company-list" class="flex flex-col space-y-2">
-                        <!-- Filled by JS -->
-                    </div>
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">选择企业 (Select Company)</h3>
+                    <div id="company-list" class="flex flex-col space-y-2"></div>
                 </div>
 
-                <!-- Middle Column: Detailed Cards -->
                 <div class="lg:col-span-5 space-y-6">
-                    <!-- Brand Focus Card -->
                     <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 card-hover">
                         <div class="flex items-center gap-2 mb-4">
-                            <div class="p-2 bg-sky-50 rounded-lg text-sky-600">
-                                <i data-lucide="target" class="h-5 w-5"></i>
-                            </div>
-                            <h2 class="text-lg font-bold">品牌传播与焦点 (Brand Focus)</h2>
+                            <div class="p-2 bg-sky-50 rounded-lg text-sky-600"><i data-lucide="target" class="h-5 w-5"></i></div>
+                            <h2 class="text-lg font-bold">MarCom 传播与焦点</h2>
                         </div>
-                        <ul id="brand-focus-list" class="space-y-3 text-sm text-slate-700">
-                            <!-- Filled by JS -->
-                        </ul>
+                        <ul id="brand-focus-list" class="space-y-3 text-sm text-slate-700"></ul>
                     </div>
-
-                    <!-- Key NPI Card (Simple View) -->
+                    
                     <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 card-hover">
                         <div class="flex items-center gap-2 mb-4">
-                            <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
-                                <i data-lucide="box" class="h-5 w-5"></i>
+                            <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600"><i data-lucide="box" class="h-5 w-5"></i></div>
+                            <div class="flex-1">
+                                <h2 class="text-lg font-bold">本季发布新品 (All NPIs)</h2>
+                                <p class="text-xs text-slate-400">包含本季度中国市场所有上市/获批型号</p>
                             </div>
-                            <h2 class="text-lg font-bold">本季主推新品 (Key NPI)</h2>
                         </div>
-                        <div id="npi-content" class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm">
-                            <!-- Filled by JS -->
-                        </div>
+                        <div id="npi-content" class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm npi-scroll-container custom-scrollbar"></div>
                     </div>
                 </div>
 
-                <!-- Right Column: Visualization -->
                 <div class="lg:col-span-4">
                     <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 h-full">
                         <div class="mb-4 border-b border-slate-100 pb-2">
                             <h2 class="text-lg font-bold">战略维度强度分析</h2>
-                            <p class="text-xs text-slate-400">基于营销文本关键词频率的定性评分 (1-5)</p>
+                            <p class="text-xs text-slate-400">基于营销文本关键词频率的定性评分</p>
                         </div>
-                        
-                        <!-- Chart Container -->
                         <div class="chart-container flex items-center justify-center">
                             <canvas id="strategyChart"></canvas>
                         </div>
@@ -158,472 +94,349 @@
                 </div>
             </div>
 
-             <!-- Detailed Comparison Table Section -->
-             <div class="mt-8 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+            <div class="mt-8 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
                 <div class="bg-slate-800 px-6 py-4 border-b border-slate-700 flex justify-between items-center">
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                        <i data-lucide="table" class="h-5 w-5 text-sky-400"></i>
-                        竞争格局全景矩阵 (Detailed Landscape)
-                    </h3>
-                    <span class="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">← 左右滑动查看完整信息 →</span>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="table" class="h-5 w-5 text-sky-400"></i> 全景矩阵 (Landscape)</h3>
                 </div>
                 <div class="overflow-x-auto custom-scrollbar">
                     <table class="min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-100">
                             <tr>
-                                <th scope="col" class="sticky-col px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider shadow-sm w-36">企业 (Company)</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider min-w-[200px]">核心产品列表 (Key NPIs)</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider min-w-[300px]">品牌传播与焦点 (Brand Focus)</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider min-w-[240px]">传播渠道 (Channels)</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider min-w-[300px] border-l border-slate-200">参考信源 (References)</th>
+                                <th class="sticky-col px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase w-36">企业 (Company)</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase min-w-[300px]">当季新品清单 (All NPIs)</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase min-w-[300px]">品牌焦点 (Brand Focus)</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase min-w-[200px] border-l border-slate-200">传播渠道 (Channels)</th>
                             </tr>
                         </thead>
-                        <tbody id="comparison-table-body" class="bg-white divide-y divide-slate-200">
-                            <!-- Filled by JS -->
-                        </tbody>
+                        <tbody id="comparison-table-body" class="bg-white divide-y divide-slate-200"></tbody>
                     </table>
                 </div>
             </div>
-
         </div>
 
-        <!-- VIEW 2: MARKET DYNAMICS -->
         <div id="view-market" class="hidden animate-fade-in">
-            <!-- Section Intro -->
             <div class="mb-8">
-                <h1 class="text-2xl font-bold text-slate-900 mb-2">市场动态与业务优先级 (Market Dynamics & Business Priorities)</h1>
-                <p class="text-slate-600 max-w-3xl">
-                    本板块汇总了影响中国医疗设备行业的宏观政策与市场趋势。重点关注<strong>医保定价新规</strong>带来的商业模式变化。
-                </p>
+                <h1 class="text-2xl font-bold text-slate-900 mb-2">市场动态与业务优先级</h1>
+                <p class="text-slate-600 max-w-3xl" id="market-intro">Loading...</p>
             </div>
-
-            <!-- Top Cards: Dynamics -->
+            
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <!-- Dynamic 1 -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-blue-500">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="font-bold text-lg text-slate-800">行业宏观趋势</h3>
                         <i data-lucide="trending-up" class="h-6 w-6 text-blue-500"></i>
                     </div>
-                    <ul class="space-y-2 text-sm text-slate-600">
-                        <li class="flex items-start gap-2"><span class="text-blue-500">•</span> 医疗新基建持续推进</li>
-                        <li class="flex items-start gap-2"><span class="text-blue-500">•</span> “AI + Healthcare” 深度融合</li>
-                        <li class="flex items-start gap-2"><span class="text-blue-500">•</span> 本土化生产要求提升</li>
-                        <li class="flex items-start gap-2"><span class="text-blue-500">•</span> 集中采购 (VBP) 常态化</li>
-                    </ul>
+                    <ul class="space-y-2 text-sm text-slate-600" id="market-macro-list"></ul>
                 </div>
-
-                <!-- Dynamic 2: Pricing (Highlight) -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-rose-500 relative overflow-hidden">
                     <div class="absolute -right-4 -top-4 bg-rose-50 w-24 h-24 rounded-full opacity-50"></div>
                     <div class="flex items-center justify-between mb-4 relative z-10">
-                        <h3 class="font-bold text-lg text-slate-800">医保定价新规</h3>
+                        <h3 class="font-bold text-lg text-slate-800" id="market-policy-title">政策焦点</h3>
                         <i data-lucide="receipt" class="h-6 w-6 text-rose-500"></i>
                     </div>
-                    <div class="space-y-3 text-sm text-slate-600 relative z-10">
-                        <p class="font-medium text-slate-900">按效果/质量定价模式确立：</p>
-                        <ul class="space-y-2">
-                            <li class="flex items-start gap-2"><span class="text-rose-500">→</span> <strong>CT/MRI/PET-CT:</strong> 检查项目定价规则变更。</li>
-                            <li class="flex items-start gap-2"><span class="text-rose-500">→</span> <strong>高精准检查:</strong> 收费标准动态调整。</li>
-                            <li class="flex items-start gap-2"><span class="text-rose-500">→</span> <strong>Cardiac MRI/MRA:</strong> 价格出现波动调整。</li>
-                        </ul>
-                    </div>
+                    <div class="space-y-3 text-sm text-slate-600 relative z-10" id="market-policy-content"></div>
                 </div>
-
-                <!-- Dynamic 3: Business Priorities -->
-                <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-xl shadow-lg text-white">
+                <div class="bg-violet-50 p-6 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-violet-600">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-bold text-lg text-white">业务优先级 (Business Priorities)</h3>
-                        <i data-lucide="flag" class="h-6 w-6 text-sky-400"></i>
+                        <h3 class="font-bold text-lg text-slate-800">行业战略优先级</h3>
+                        <i data-lucide="flag" class="h-6 w-6 text-violet-600"></i>
                     </div>
-                    <p class="text-slate-300 text-sm mb-4 italic">基于市场动态的战略应对：</p>
-                    <div class="bg-white/10 p-4 rounded-lg backdrop-blur-sm border border-white/10">
-                        <p class="font-semibold text-lg text-sky-300">"Enhance portfolio differentiation in premium and performance segments"</p>
-                        <p class="text-xs text-slate-400 mt-2">在高端与高性能细分市场增强产品组合的差异化竞争力。</p>
+                    <div class="bg-white/60 p-4 rounded-lg border border-violet-100">
+                        <p class="font-semibold text-lg text-violet-900 italic" id="market-strategy-quote">""</p>
+                        <p class="text-xs text-slate-600 mt-2" id="market-strategy-desc"></p>
                     </div>
                 </div>
             </div>
-
-            <!-- Detailed Analysis Section -->
+            
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
                     <h3 class="font-bold text-slate-800">趋势深度解读</h3>
                 </div>
-                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="font-semibold text-sky-600 mb-2">本土化 (Localization) 的深化</h4>
-                        <p class="text-sm text-slate-600 leading-relaxed">
-                            仅仅依靠进口已无法满足市场需求。GE的“无界创新”和西门子的“本地生产占比”表明，跨国企业正从“在中国销售”转向“在中国制造”乃至“在中国研发”。这不仅是应对集采的策略，更是为了快速响应中国独特的临床需求。
-                        </p>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-indigo-600 mb-2">AI 价值的落地 (AI Value Realization)</h4>
-                        <p class="text-sm text-slate-600 leading-relaxed">
-                            从Philips的健康科技到联影的数智化融合，AI不再是概念，而是具体的收费项目和临床工具。配合医保“按效果定价”的新规，能够证明AI提升了诊断效率或准确率的产品将获得溢价空间。
-                        </p>
-                    </div>
-                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8" id="market-deep-dive"></div>
             </div>
         </div>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 mt-12 py-8">
-        <div class="max-w-7xl mx-auto px-4 text-center text-slate-400 text-sm">
-            <p>© 2025 Competition MarCom Insights & Market Dynamics Report.</p>
-        </div>
-    </footer>
-
     <script>
-        // --- DATA STORE ---
-        const competitors = [
-            {
-                id: 'philips',
-                name: 'PHILIPS',
-                color: 'rgb(20, 90, 255)',
-                focus: [
-                    '<strong>AI 赋能:</strong> SmartSpeed AI重建算法，健康科技全流程解决方案',
-                    '<strong>品牌主题:</strong> “创新无界，关怀至享” (Innovation & You 2.0)',
-                    '<strong>本土化:</strong> 成立中国创新中心周年庆，强调“中国智造”',
-                    '<strong>可持续:</strong> 绿色无液氦磁共振技术推广'
-                ],
-                npiList: [
-                    'Spectral CT 7600 (皓克光谱CT)',
-                    'Azurion 7 C20',
-                    'MR 5300 (无液氦)'
-                ],
-                channels: [
-                    { name: '官方微信', type: 'Official' },
-                    { name: '器械之家 (Medical Device Home)', type: 'Media' },
-                    { name: '医学 MedTech', type: 'Media' },
-                    { name: '丁香园 (DXY)', type: 'Forum' }
-                ],
-                scores: { ai: 5, local: 4, innovation: 4, esg: 5, partner: 3 },
-                references: [
-                    { title: '飞利浦发布Q4财报：中国市场AI战略解读', date: '2025-10-15', url: '#' },
-                    { title: 'Spectral CT 7600 临床应用白皮书发布', date: '2025-11-02', url: '#' }
-                ]
-            },
-            {
-                id: 'ge',
-                name: 'GE HealthCare',
-                color: 'rgb(123, 31, 162)',
-                focus: [
-                    '<strong>精准医疗:</strong> Care Pathway 临床路径优化',
-                    '<strong>非公医疗:</strong> 推出“智享”系列专供民营医院',
-                    '<strong>公益行动:</strong> “粉红行动” (乳腺癌防治公益)',
-                    '<strong>本土化:</strong> “无界创新” (In China For Global) 战略升级'
-                ],
-                npiList: [
-                    'Apex Quantum (Apex量子平台)',
-                    'Omni Legend PET/CT',
-                    'SIGNA Hero 3.0T'
-                ],
-                channels: [
-                    { name: '官方视频号', type: 'Official' },
-                    { name: '动脉网 (VBData)', type: 'Media' },
-                    { name: '健康界', type: 'Media' },
-                    { name: '中华核医学年会', type: 'Forum' }
-                ],
-                scores: { ai: 4, local: 5, innovation: 4, esg: 5, partner: 4 },
-                references: [
-                    { title: 'GE医疗大中华区总裁谈“无界创新”', date: '2025-10-20', url: '#' },
-                    { title: '核医学年会：Omni Legend 亮相', date: '2025-11-10', url: '#' }
-                ]
-            },
-            {
-                id: 'siemens',
-                name: 'SIEMENS',
-                color: 'rgb(255, 165, 0)',
-                focus: [
-                    '<strong>技术创新:</strong> 光子计数技术 (Photon Counting)',
-                    '<strong>医学 AI:</strong> AI-Rad Companion 辅助诊断',
-                    '<strong>本土化:</strong> 深圳/上海基地产能扩建',
-                    '<strong>可持续:</strong> 碳中和工厂示范项目'
-                ],
-                npiList: [
-                    'NAEOTOM Alpha (光子计数)',
-                    'MAGNETOM Free.Star (0.55T)',
-                    'Cios Spin'
-                ],
-                channels: [
-                    { name: '西门子医疗官方', type: 'Official' },
-                    { name: '放射沙龙', type: 'Forum' },
-                    { name: '中华放射学杂志', type: 'Academic' },
-                    { name: 'CMEF 官方直播', type: 'Event' }
-                ],
-                scores: { ai: 4, local: 5, innovation: 5, esg: 4, partner: 3 },
-                references: [
-                    { title: '光子计数CT临床应用专家共识', date: '2025-10-05', url: '#' }
-                ]
-            },
-            {
-                id: 'united',
-                name: 'UNITED IMAGING (联影)',
-                color: 'rgb(220, 20, 60)',
-                focus: [
-                    '<strong>技术突破:</strong> 5.0T/uAIFI 平台技术突破',
-                    '<strong>AI 融合:</strong> uAI 影智全栈人工智能平台',
-                    '<strong>战略:</strong> 县域医疗千县工程响应',
-                    '<strong>合作:</strong> 顶尖三甲医院产学研医协同'
-                ],
-                npiList: [
-                    'uMR Jupiter 5.0T',
-                    'uCT 960+',
-                    'uAngio 960'
-                ],
-                channels: [
-                    { name: '联影医疗官方', type: 'Official' },
-                    { name: '赛柏蓝器械', type: 'Media' },
-                    { name: '科研圈', type: 'Academic' },
-                    { name: '中国医疗设备杂志', type: 'Media' }
-                ],
-                scores: { ai: 5, local: 5, innovation: 4, esg: 2, partner: 5 },
-                references: [
-                    { title: '联影5.0T磁共振全球首发报道', date: '2025-11-15', url: '#' },
-                    { title: '县域医疗设备升级趋势分析', date: '2025-12-01', url: '#' }
-                ]
-            },
-            {
-                id: 'mindray',
-                name: 'Mindray (迈瑞)',
-                color: 'rgb(0, 128, 128)',
-                focus: [
-                    '<strong>国际化:</strong> 全球高端客户突破',
-                    '<strong>生态构建:</strong> “瑞智联” (M-Connect)',
-                    '<strong>远程医疗:</strong> 5G+远程超声/监护方案',
-                    '<strong>数字化:</strong> 智慧医院全院解决方案'
-                ],
-                npiList: [
-                    'Resona R9 Platinum',
-                    'BeneVision N Series',
-                    'A8 Anesthesia'
-                ],
-                channels: [
-                    { name: '迈瑞医疗官微', type: 'Official' },
-                    { name: '医械经理人', type: 'Media' },
-                    { name: 'Medgadget', type: 'Media' },
-                    { name: '中华医学会麻醉年会', type: 'Forum' }
-                ],
-                scores: { ai: 4, local: 3, innovation: 3, esg: 3, partner: 4 },
-                references: [
-                    { title: '迈瑞医疗海外市场营收分析', date: '2025-10-30', url: '#' }
-                ]
-            },
-            {
-                id: 'neusoft',
-                name: 'Neusoft (东软)',
-                color: 'rgb(65, 105, 225)',
-                focus: [
-                    '<strong>产品创新:</strong> MDaaS (医疗设备即服务)',
-                    '<strong>前沿技术:</strong> 光子计数CT原型机预研',
-                    '<strong>产研融合:</strong> 东北大学/各附属医院合作',
-                    '<strong>产品力:</strong> “无极”系列CT技术迭代'
-                ],
-                npiList: [
-                    'NeuViz Epoch (无极)',
-                    'NeuMR 1.5T (盛世)',
-                    'NeuAngio 30C'
-                ],
-                channels: [
-                    { name: '东软医疗', type: 'Official' },
-                    { name: '中国医疗设备', type: 'Media' },
-                    { name: '中华医学影像分会', type: 'Forum' }
-                ],
-                scores: { ai: 3, local: 5, innovation: 5, esg: 2, partner: 5 },
-                references: [
-                    { title: '东软医疗上市两周年庆', date: '2025-09-28', url: '#' }
-                ]
-            }
-        ];
+        /* ========================================================================
+           ★★★ 替换区域开始 (REPLACE START) ★★★
+           使用 Gemini 生成的 JSON 替换下面的 const reportData = { ... }; 
+           ======================================================================== */
+        const reportData = {
+"period": "2025 Q4",
+"summary": {
+"title": "高端创新与本土生态的双重加速",
+"text": "2025年第四季度，中国医疗设备市场在政策与竞争的双重驱动下呈现鲜明特征。宏观层面，《“人工智能+医疗卫生”应用发展的实施意见》正式出台，为行业智能化转型指明方向；同时，高端医疗装备国产化项目获政策支持，全国医保影像云建设取得实质性进展。竞争格局上，各厂商围绕光子计数CT等尖端技术展开激烈角逐，本土厂商（联影、东软）新品密集获批上市，外资巨头（GE、西门子）则加速本土化生产与创新生态构建。AI技术从概念展示加速走向临床落地，成为产品差异化与构建全栈解决方案的核心。"
+},
+"market": {
+"intro": "本季度市场动态聚焦国家战略落地、数据互联互通、高端装备支持及价格与采购政策深化。",
+"macro_trends": [
+"“人工智能+医疗卫生”国家战略落地，明确2030年基层及二级以上医院智能化应用目标。",
+"全国医保影像云跨省调阅启动，24省完成部署，超1.7亿条数据上云，推动数据互联互通。",
+"高端装备国产化获政策支持，工信部公布“2025年高端医疗装备推广应用项目”。",
+"医疗设备集采持续深化，内蒙古出台全国首个工作规范，明确“无论何种资金来源均实施集采”。"
+],
+"policy": {
+"title": "《“人工智能+医疗卫生”应用发展的实施意见》",
+"content": "国家卫健委等五部门于2025年11月联合印发。政策提出到2030年，基层诊疗智能辅助应用基本实现全覆盖，二级以上医院普遍开展影像智能诊断、临床决策辅助等智能化应用。此举将极大推动AI技术与医疗设备的深度融合，加速医院数字化、智能化转型进程。"
+},
+"strategy": {
+"quote": "在中国、为中国、惠全球",
+"desc": "外资企业深化本土化战略的核心表述，强调以中国为创新策源地，研发满足本土需求的产品，并将成果反哺全球市场。"
+},
+"deep_dive": [
+{
+"title": "高端影像技术密集突破，国产厂商引领创新潮",
+"text": "本季度，光子计数CT成为竞争焦点。联影、东软的光子计数CT同日获批上市，西门子同类产品进入创新审批通道并计划2026年本土生产。此外，联影发布全球首创双宽体双源CT，东软发布1024层宽体CT及全域分子研究型MR。这表明本土厂商在高端影像领域已实现从追赶到并跑甚至局部领跑，技术壁垒正在被快速突破。"
+},
+{
+"title": "AI从技术展示走向临床落地与生态构建",
+"text": "AI应用超越单一功能，向系统性解决方案演进。迈瑞发布“重症医学大模型”及瑞智系列管理系统；联影“一键式”AI心脏MR在北京友谊医院启用，将检查时间大幅缩短；GE与阿里达摩院合作推进“一扫多查”AI技术。同时，产业生态构建加速，东软发起“光子计数CT开发者临床科研国际转化联盟”(INPACT)，GE、西门子均与医渡科技等本土AI企业达成战略合作。"
+}
+]
+},
+"competitors": [
+{
+"id": "ge",
+"name": "GE HealthCare",
+"color": "rgb(0, 112, 187)",
+"focus": [
+"进博会生态展示: 在第八届进博会首发18款新品（9款全球首秀），60%为中国团队主导研发，强调构建“从技术到临床、从公立到非公的精准医疗创新生态”。",
+"精准医疗+AI落地: 与阿里巴巴达摩院签署合作，推进“一扫多查”AI技术与影像设备融合；与医渡科技达成战略合作。",
+"布局未来赛道: 押注并推动其投资的Pulsenmore公司“ES家用产前超声平台”获FDA批准，进入家庭超声新市场。",
+"强化本土制造: 北京基地（航卫通用）入选“2025年度国家卓越级智能工厂”。"
+],
+"npiList": ["Expert X新量子CT (集成4D心脏成像技术)", "MR-PET无辐射实时代谢磁共振", "ES家用产前超声平台 (Pulsenmore研发，GE投资推动)"],
+"scores": {
+"ai": 4,
+"local": 5,
+"innovation": 4,
+"esg": 4,
+"partner": 5
+},
+"channels": [
+{ "name": "第八届中国国际进口博览会（进博会）", "type": "Event" },
+{ "name": "“GE医疗”微信公众号", "type": "Social" },
+{ "name": "器械之家", "type": "Media" },
+{ "name": "神外前沿", "type": "Media" }
+]
+},
+{
+"id": "siemens",
+"name": "SIEMENS Healthineers",
+"color": "rgb(0, 153, 153)",
+"focus": [
+"加速高端设备本土化: 国产双光源光子计数CT获准进入创新医疗器械特别审查程序，为本土生产铺路。",
+"深化AI临床转化: 前列腺癌磁共振图像辅助检测软件获批上市；与医渡科技达成战略合作探索智能医疗。",
+"推动学术与公益: 联合启动“肺”常守护肺癌防治公益项目；开启中国青年学者赴欧研学项目。",
+"持续本土合作: 与华中科技大学同济医学院附属同济医院签署合作协议，成为其国家医学中心科创院理事会唯一跨国医械企业成员。"
+],
+"npiList": ["国产双光源光子计数CT (进入创新审批通道)", "前列腺癌磁共振图像辅助检测软件 (获批上市)", "磁共振成像系统 (2025年首款获批创新产品)"],
+"scores": {
+"ai": 4,
+"local": 5,
+"innovation": 5,
+"esg": 4,
+"partner": 4
+},
+"channels": [
+{ "name": "“西门子医疗”微信公众号", "type": "Social" },
+{ "name": "器械汇", "type": "Media" },
+{ "name": "医械知识产权", "type": "Media" }
+]
+},
+{
+"id": "united",
+"name": "UNITED IMAGING",
+"color": "rgb(255, 102, 0)",
+"focus": [
+"高端影像技术突破: 举办国产CT创新技术发展大会，全球首发双宽体双源CT (uCT Sirius X)与国产首款光子计数能谱CT (uCT Ultima)。",
+"完成全产品线布局: 召开超声品牌发布会，全球首发覆盖多形态、多科室的uSONIQUE系列超声产品矩阵，标志完成“CT、MR、MI、US、RT、AI”六大产品线布局。",
+"AI与临床深度结合: “一键式”AI驱动心脏MR检查在北京友谊医院启用，将检查时间从30-50分钟缩短至10分钟左右。",
+"介入诊疗创新发布: 发布全球首创的十大介入诊疗引领性创新技术。"
+],
+"npiList": ["uCT Ultima (国产首款光子计数能谱CT)", "uCT Sirius X (全球首创双宽体双源CT)", "uSONIQUE系列超声产品矩阵", "“一键式”AI驱动心脏磁共振检查方案", "智能DSA (十大介入诊疗创新技术)"],
+"scores": {
+"ai": 5,
+"local": 5,
+"innovation": 5,
+"esg": 3,
+"partner": 4
+},
+"channels": [
+{ "name": "国产CT创新技术发展大会/超声品牌发布会", "type": "Event" },
+{ "name": "“联影医疗”、“联影智能”微信公众号", "type": "Social" },
+{ "name": "器械之家", "type": "Media" },
+{ "name": "首都医科大学附属北京友谊医院", "type": "Hospital" }
+]
+},
+{
+"id": "mindray",
+"name": "mindray",
+"color": "rgb(204, 0, 0)",
+"focus": [
+"构建“设备+IT+AI”生态: 发布重症医学大模型、瑞智设备管理信息系统、瑞智围术期决策辅助系统，打造全栈全景智能解决方案。",
+"深化产学研合作: 与香港中文大学医学院建立战略合作伙伴关系，共同探索智慧医疗。",
+"推动AI产品创新审批: 乳腺超声辅助评估软件进入创新医疗器械特别审查程序。"
+],
+"npiList": ["重症医学大模型", "瑞智设备管理信息系统", "瑞智围术期决策辅助系统", "乳腺超声辅助评估软件 (进入创新审批通道)"],
+"scores": {
+"ai": 5,
+"local": 4,
+"innovation": 4,
+"esg": 3,
+"partner": 4
+},
+"channels": [
+{ "name": "“迈瑞医疗”微信公众号", "type": "Social" },
+{ "name": "与香港中文大学医学院战略合作发布", "type": "Partner" }
+]
+},
+{
+"id": "neusoft",
+"name": "Neusoft",
+"color": "rgb(153, 51, 102)",
+"focus": [
+"发布高端影像新品: 全球首发宽体光子计数CT (NeuViz P10)及1024层宽体超高清CT (NeuViz 1024)；发布全域分子研究型磁共振 (NeuMR Wasa)。",
+"构建光子计数CT生态: 率先发起“光子计数CT开发者临床科研国际转化联盟”(INPACT)，推动生态共建。",
+"深化医工协同: 与北京清华长庚医院共建“高端医疗设备数字化联合研发中心”。",
+"拓展产品组合: 其HAN-Link“智”平台血管造影系统(DSA)因四大技术优势，在国产DSA市场中占据近半份额。"
+],
+"npiList": ["NeuViz P10 (全球首台宽体光子计数CT)", "NeuViz 1024 (1024层宽体超高清CT)", "NeuMR Wasa (全域分子研究型磁共振)", "HAN-Link“智”平台血管造影系统(DSA)"],
+"scores": {
+"ai": 4,
+"local": 5,
+"innovation": 5,
+"esg": 3,
+"partner": 5
+},
+"channels": [
+{ "name": "中华医学会放射学学术大会(CCR)", "type": "Event" },
+{ "name": "“东软医疗”微信公众号", "type": "Social" },
+{ "name": "医疗器械经销商联盟", "type": "Media" },
+{ "name": "医工研习社", "type": "Media" }
+]
+}
+]
+};
+        /* ========================================================================
+           ★★★ 替换区域结束 (REPLACE END) ★★★
+           ======================================================================== */
 
-        // --- STATE & DOM ---
-        let currentCompetitorId = 'philips';
-        let radarChartInstance = null;
-        const companyListEl = document.getElementById('company-list');
-        const brandFocusListEl = document.getElementById('brand-focus-list');
-        const npiContentEl = document.getElementById('npi-content');
-        const tableBodyEl = document.getElementById('comparison-table-body');
+        // --- Render Logic ---
+        let currentId = reportData.competitors[0] ? reportData.competitors[0].id : '';
+        let radarChart = null;
 
-        // --- INIT ---
-        document.addEventListener('DOMContentLoaded', () => {
-             if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-            renderCompanyList();
+        function init() {
+            document.getElementById('report-period').innerText = reportData.period;
+            
+            // Market View
+            const m = reportData.market;
+            document.getElementById('market-intro').innerText = m.intro;
+            document.getElementById('market-macro-list').innerHTML = m.macro_trends.map(t => `<li class="flex items-start gap-2"><span class="text-blue-500">•</span> ${t}</li>`).join('');
+            document.getElementById('market-policy-title').innerText = m.policy.title;
+            document.getElementById('market-policy-content').innerHTML = m.policy.content;
+            document.getElementById('market-strategy-quote').innerText = `"${m.strategy.quote}"`;
+            document.getElementById('market-strategy-desc').innerText = m.strategy.desc;
+            document.getElementById('market-deep-dive').innerHTML = m.deep_dive.map(d => `<div><h4 class="font-semibold text-sky-600 mb-2">${d.title}</h4><p class="text-sm text-slate-600 leading-relaxed">${d.text}</p></div>`).join('');
+
+            // Summary
+            document.getElementById('comp-summary-title').innerText = reportData.summary.title;
+            document.getElementById('comp-summary-text').innerText = reportData.summary.text;
+
+            renderCompetitorList();
             renderComparisonTable();
-            updateDashboard(currentCompetitorId);
-        });
+            if(currentId) updateCompetitorView(currentId);
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
 
-        // --- RENDERING ---
-        function renderCompanyList() {
-            companyListEl.innerHTML = competitors.map(comp => `
-                <button 
-                    onclick="selectCompany('${comp.id}')"
-                    id="btn-${comp.id}"
-                    class="company-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors flex items-center justify-between group"
-                >
-                    <span class="font-medium text-sm">${comp.name}</span>
-                    <i data-lucide="chevron-right" class="h-4 w-4 text-slate-300 group-hover:text-slate-500"></i>
+        function renderCompetitorList() {
+            document.getElementById('company-list').innerHTML = reportData.competitors.map(c => `
+                <button onclick="changeCompany('${c.id}')" id="btn-${c.id}" class="company-btn w-full text-left px-4 py-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 flex justify-between items-center group">
+                    <span class="font-medium text-sm">${c.name}</span>
+                    <i data-lucide="chevron-right" class="h-4 w-4 text-slate-300"></i>
                 </button>
             `).join('');
-            setTimeout(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); }, 0);
         }
 
-        function selectCompany(id) {
-            currentCompetitorId = id;
-            updateDashboard(id);
+        function changeCompany(id) {
+            currentId = id;
+            updateCompetitorView(id);
         }
 
-        function updateDashboard(id) {
-            const data = competitors.find(c => c.id === id);
+        function updateCompetitorView(id) {
+            const data = reportData.competitors.find(c => c.id === id);
+            document.querySelectorAll('.company-btn').forEach(b => b.classList.remove('active', 'ring-2', 'ring-sky-500'));
+            document.getElementById(`btn-${id}`).classList.add('active');
+
+            document.getElementById('brand-focus-list').innerHTML = data.focus.map(f => `<li class="flex items-start gap-3"><span class="h-1.5 w-1.5 rounded-full bg-sky-500 mt-2 shrink-0"></span><span>${f}</span></li>`).join('');
             
-            // Buttons
-            document.querySelectorAll('.company-btn').forEach(btn => btn.classList.remove('active', 'ring-2', 'ring-offset-1', 'ring-sky-500'));
-            const activeBtn = document.getElementById(`btn-${id}`);
-            if(activeBtn) activeBtn.classList.add('active');
+            // Render NPIs
+            const npiHtml = (data.npiList && data.npiList.length) ? data.npiList.map(n => `<li class="flex items-center gap-2"><i data-lucide="check-circle" class="h-4 w-4 text-indigo-500"></i><span class="font-medium">${n}</span></li>`).join('') : '<li class="text-slate-400">暂无数据</li>';
+            document.getElementById('npi-content').innerHTML = `<ul class="space-y-2">${npiHtml}</ul>`;
 
-            // Brand Focus List
-            brandFocusListEl.innerHTML = data.focus.map(item => `
-                <li class="flex items-start gap-3 animate-fade-in-up">
-                    <span class="h-1.5 w-1.5 rounded-full bg-sky-500 mt-2 shrink-0"></span>
-                    <span class="text-sm">${item}</span>
-                </li>
-            `).join('');
-
-            // NPI List (Simplified for Dashboard)
-            npiContentEl.innerHTML = `
-                <ul class="space-y-2">
-                    ${data.npiList.map(npi => `
-                        <li class="flex items-center gap-2">
-                            <i data-lucide="check-circle" class="h-4 w-4 text-indigo-500"></i>
-                            <span class="font-medium text-slate-700">${npi}</span>
-                        </li>
-                    `).join('')}
-                </ul>
-            `;
-             // Re-init icons inside dynamic content
-             setTimeout(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); }, 0);
-
-            // Chart
-            updateRadarChart(data);
+            updateChart(data);
+            setTimeout(() => lucide.createIcons(), 0);
         }
 
         function renderComparisonTable() {
-            tableBodyEl.innerHTML = competitors.map(c => `
-                <tr class="hover:bg-slate-50 transition-colors group">
-                    <td class="sticky-col px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-900 border-b border-slate-100 group-hover:bg-slate-50 align-top">
-                        ${c.name}
+            document.getElementById('comparison-table-body').innerHTML = reportData.competitors.map(c => `
+                <tr class="hover:bg-slate-50">
+                    <td class="sticky-col px-6 py-4 font-bold text-slate-900 border-b border-slate-100 bg-white align-top">${c.name}</td>
+                    <td class="px-6 py-4 text-sm border-b border-slate-100 align-top">
+                         <div class="flex flex-wrap gap-2">${(c.npiList||[]).map(n => `<span class="px-2 py-1 bg-indigo-50 text-indigo-700 text-xs rounded border border-indigo-100">${n}</span>`).join('')}</div>
                     </td>
-                    
-                    <!-- NPI List Column (Simplified Names ONLY) -->
-                    <td class="px-6 py-4 text-sm text-slate-800 border-b border-slate-100 align-top bg-indigo-50/20">
-                        <div class="flex flex-wrap gap-2">
-                             ${c.npiList.map(npi => `<span class="px-2 py-1 bg-white border border-indigo-200 rounded text-xs font-medium text-indigo-700 shadow-sm">${npi}</span>`).join('')}
-                        </div>
-                    </td>
-
-                    <!-- Brand Focus Column -->
                     <td class="px-6 py-4 text-sm text-slate-600 border-b border-slate-100 align-top">
-                        <ul class="space-y-2">
-                            ${c.focus.map(f => `<li class="pl-2 border-l-2 border-slate-200">${f}</li>`).join('')}
-                        </ul>
+                        <ul class="list-disc pl-4 space-y-1">${c.focus.map(f => `<li>${f.replace(/<\/?[^>]+(>|$)/g, "")}</li>`).join('')}</ul>
                     </td>
-                    
-                    <!-- Channels Column -->
-                    <td class="px-6 py-4 text-sm text-slate-600 border-b border-slate-100 align-top">
+                    <td class="px-6 py-4 text-sm border-b border-slate-100 border-l border-slate-200 bg-slate-50 align-top">
                         <div class="flex flex-wrap gap-2">
-                             ${c.channels.map(ch => {
-                                 let colorClass = "bg-slate-100 text-slate-600 border-slate-200";
-                                 if (ch.type === 'Media') colorClass = "bg-blue-50 text-blue-700 border-blue-100";
-                                 if (ch.type === 'Forum' || ch.type === 'Academic') colorClass = "bg-emerald-50 text-emerald-700 border-emerald-100";
-                                 if (ch.type === 'Official') colorClass = "bg-slate-800 text-white border-slate-800";
-                                 return `<span class="px-2 py-1 border rounded text-xs shadow-sm font-medium ${colorClass}">${ch.name}</span>`;
-                             }).join('')}
+                            ${(c.channels || []).map(ch => {
+                                let color = "bg-slate-200 text-slate-600";
+                                if(ch.type === 'Social') color = "bg-green-100 text-green-800 border-green-200";
+                                if(ch.type === 'Event') color = "bg-blue-100 text-blue-800 border-blue-200";
+                                if(ch.type === 'Media') color = "bg-purple-100 text-purple-800 border-purple-200";
+                                return `<span class="px-2 py-1 border rounded text-xs font-medium ${color}">${ch.name}</span>`;
+                            }).join('')}
                         </div>
-                    </td>
-
-                    <!-- References Column (NEW) -->
-                    <td class="px-6 py-4 text-sm border-b border-slate-100 border-l border-slate-200 align-top bg-slate-50/50">
-                        <ul class="space-y-2">
-                            ${c.references && c.references.length > 0 ? c.references.map(ref => `
-                                <li class="flex flex-col">
-                                    <a href="${ref.url}" target="_blank" class="text-sky-600 font-medium text-xs link-hover flex items-center gap-1">
-                                        ${ref.title}
-                                        <i data-lucide="external-link" class="h-3 w-3"></i>
-                                    </a>
-                                    <span class="text-slate-400 text-[10px]">${ref.date}</span>
-                                </li>
-                            `).join('') : '<li class="text-slate-400 text-xs">-</li>'}
-                        </ul>
                     </td>
                 </tr>
             `).join('');
         }
 
-        function updateRadarChart(data) {
+        function updateChart(data) {
             const ctx = document.getElementById('strategyChart').getContext('2d');
-            const chartData = {
-                labels: ['AI & Digital', 'Localization', 'Innovation', 'ESG/Charity', 'Partnership'],
-                datasets: [{
-                    label: data.name,
-                    data: [data.scores.ai, data.scores.local, data.scores.innovation, data.scores.esg, data.scores.partner],
-                    backgroundColor: data.color.replace('rgb', 'rgba').replace(')', ', 0.2)'),
-                    borderColor: data.color,
-                    pointBackgroundColor: data.color,
-                    borderWidth: 2
-                }]
-            };
-
-            const config = {
+            if (radarChart) radarChart.destroy();
+            radarChart = new Chart(ctx, {
                 type: 'radar',
-                data: chartData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { color: '#e2e8f0' },
-                            grid: { color: '#e2e8f0' },
-                            pointLabels: { font: { size: 11 }, color: '#64748b' },
-                            suggestedMin: 0, suggestedMax: 5, ticks: { display: false, stepSize: 1 }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: true },
-                        tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)' }
-                    }
-                }
-            };
-
-            if (radarChartInstance) radarChartInstance.destroy();
-            radarChartInstance = new Chart(ctx, config);
+                data: {
+                    labels: ['AI & Digital', 'Localization', 'Innovation', 'ESG', 'Partner'],
+                    datasets: [{
+                        label: data.name,
+                        data: [data.scores.ai, data.scores.local, data.scores.innovation, data.scores.esg, data.scores.partner],
+                        backgroundColor: data.color.replace('rgb', 'rgba').replace(')', ', 0.2)'),
+                        borderColor: data.color,
+                        borderWidth: 2
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { r: { suggestedMin: 0, suggestedMax: 5, ticks: {display: false} } } }
+            });
         }
 
-        function switchView(viewName) {
+        function switchView(view) {
             document.getElementById('view-competitor').classList.add('hidden');
             document.getElementById('view-market').classList.add('hidden');
             document.getElementById('nav-competitor').classList.remove('active-tab', 'text-sky-600');
             document.getElementById('nav-market').classList.remove('active-tab', 'text-sky-600');
             document.getElementById('nav-competitor').classList.add('text-slate-500');
             document.getElementById('nav-market').classList.add('text-slate-500');
-
-            document.getElementById(`view-${viewName}`).classList.remove('hidden');
-            const activeNav = document.getElementById(`nav-${viewName}`);
-            activeNav.classList.add('active-tab', 'text-sky-600');
-            activeNav.classList.remove('text-slate-500');
+            document.getElementById(`view-${view}`).classList.remove('hidden');
+            document.getElementById(`nav-${view}`).classList.add('active-tab', 'text-sky-600');
+            document.getElementById(`nav-${view}`).classList.remove('text-slate-500');
         }
 
-        // Simple animations
-        const styleSheet = document.createElement("style");
-        styleSheet.innerText = `
-            .animate-fade-in { animation: fadeIn 0.5s ease-out; }
-            .animate-fade-in-up { animation: fadeInUp 0.4s ease-out; }
-            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-            @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        `;
-        document.head.appendChild(styleSheet);
+        window.onload = init;
     </script>
 </body>
 </html>
